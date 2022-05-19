@@ -1,39 +1,22 @@
-package com.bohdanllk.model;
+package com.bohdanllk.dto;
 
-import org.springframework.stereotype.Component;
+import com.bohdanllk.model.App;
+import com.bohdanllk.model.Os;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.UUID;
 
-@Entity
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = {"combination", "description", "app_id", "os_id" }) })
-public class Hotkey {
+public class HotkeyDTO {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "id")
     private UUID id;
 
-
-    @NotNull(message = "hotkey combination should be not null!")
-    @Column(name = "combination")
     private String combination;
 
-    @NotNull(message = "hotkey description should be not null!")
-    @Column(name = "description")
     private String description;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name="app_id")
-    private App app;
+    private AppDTO app;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name="os_id")
-    private Os os;
+    private OsDTO os;
 
 
     //Getters
@@ -49,11 +32,13 @@ public class Hotkey {
         return description;
     }
 
-    public App getApp() {
+    public AppDTO getApp() {
         return app;
     }
 
-    public Os getOs() {return os;}
+    public OsDTO getOs() {
+        return os;
+    }
 
 
     //Setters
@@ -69,18 +54,19 @@ public class Hotkey {
         this.description = description;
     }
 
-    public void setApp(App app) {
+    public void setApp(AppDTO app) {
         this.app = app;
     }
 
-    public void setOs(Os os) {this.os = os;}
-
-
-    //Constructors
-    public Hotkey() {
+    public void setOs(OsDTO os) {
+        this.os = os;
     }
 
-    public Hotkey(String combination, String description) {
+    //Constructors
+    public HotkeyDTO() {
+    }
+
+    public HotkeyDTO(String combination, String description) {
         this.combination = combination;
         this.description = description;
     }

@@ -1,2 +1,7 @@
-package com.bohdanllk.service;public interface OsService {
+package com.bohdanllk.service;
+
+import com.bohdanllk.dto.OsDTO;
+
+public interface OsService extends BaseService<OsDTO> {
+
 }

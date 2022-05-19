@@ -1,73 +1,54 @@
 package com.bohdanllk.service;
 
-import com.bohdanllk.dao.AppDAOImpl;
-import com.bohdanllk.dao.HotkeyDAOImpl;
-import com.bohdanllk.dao.OsDAOImpl;
-import com.bohdanllk.model.App;
-import com.bohdanllk.model.Hotkey;
+import com.bohdanllk.dao.OsDAO;
+import com.bohdanllk.dto.OsDTO;
+import com.bohdanllk.mapper.HotkeyMapper;
+import com.bohdanllk.mapper.OsMapper;
 import com.bohdanllk.model.Os;
-import com.bohdanllk.util.SessionUtil;
-import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import org.hibernate.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
-public class HotkeyService extends SessionUtil {
-    public Os addOs(Os os) {
-        OsDAOImpl osDAO = new OsDAOImpl();
-        osDAO.add(os);
-        return os;
+@Service
+@Transactional
+public class OsServiceImpl implements OsService {
+
+    OsMapper osMapper = OsMapper.INSTANCE;
+
+    @Autowired
+    private OsDAO osDAO;
+
+    @Override
+    public void add(OsDTO osDTO) {
+        osDAO.add(osMapper.dtoToOs(osDTO));
     }
 
-//    public App addApp(String os, String app) {
-//        Os findOs = addOs(os);
-//        App find = null;
-//        Session session = openTransactionSession();
-//        try {
-//            List<App> apps = session.createQuery("from App where name = :i").setParameter("i", app).list();
-//            for (App a: apps
-//            ) {
-//                find = a.getOs().getId() == findOs.getId() && a.getName().equals(app) ? a : null;
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (find == null) {
-//                AppDAOImpl appDAO = new AppDAOImpl();
-//                App newApp = new App(app, findOs);
-//                appDAO.add(newApp);
-//                find = newApp;
-//                closeTransactionSession();
-//
-//            }
-//        }
-//        return find;
-//    }
-//
-//    public Hotkey addHotkey(String os, String app, String combination, String description) {
-//        Os findOs = addOs(os);
-//        App findApp = addApp(findOs.getName(), app);
-//        Hotkey find = null;
-//
-//        Session session = openTransactionSession();
-//        try {
-//            List<Hotkey> hotkeys = session.createQuery("from Hotkey where combination = :i").setParameter("i", combination).list();;
-//            for (Hotkey h: hotkeys
-//            ) {
-//                find = h.getApp().getId() == findApp.getId() && h.getCombination().equals(combination) ? h : null;
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (find == null) {
-//                HotkeyDAOImpl hotkeyDAO = new HotkeyDAOImpl();
-//                Hotkey newHotkey = new Hotkey(combination, description, findApp);
-//                hotkeyDAO.add(newHotkey);
-//                find = newHotkey;
-//                closeTransactionSession();
-//
-//            }
-//        }
-//        return find;
-//    }
+    @Override
+    public OsDTO get(UUID id) {
+        return osMapper.osToDTO(osDAO.get(id));
+    }
+
+    @Override
+    public List<OsDTO> getAll() {
+        return osMapper.osListToDTO(osDAO.getAll());
+    }
+
+    @Override
+    public OsDTO update(OsDTO osDTO) {
+        osDAO.update(osMapper.dtoToOs(osDTO));
+        return osDTO;
+    }
+
+    @Override
+    public void delete(UUID id) {
+        osDAO.delete(id);
+    }
 }
