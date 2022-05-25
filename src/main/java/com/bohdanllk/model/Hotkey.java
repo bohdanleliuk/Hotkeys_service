@@ -1,14 +1,11 @@
 package com.bohdanllk.model;
 
-import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.UUID;
 
 @Entity
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = {"combination", "description", "app_id", "os_id" }) })
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = {"combination", "app_id", "os_id" }) })
 public class Hotkey {
 
     @Id

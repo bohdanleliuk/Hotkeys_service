@@ -1,7 +1,6 @@
 package com.bohdanllk.service;
 
 import com.bohdanllk.dto.HotkeyDTO;
-import com.bohdanllk.model.Hotkey;
 
 import java.util.List;
 

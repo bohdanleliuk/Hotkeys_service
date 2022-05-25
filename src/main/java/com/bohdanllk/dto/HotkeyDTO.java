@@ -1,9 +1,5 @@
 package com.bohdanllk.dto;
 
-import com.bohdanllk.model.App;
-import com.bohdanllk.model.Os;
-
-import javax.persistence.*;
 import java.util.UUID;
 
 public class HotkeyDTO {

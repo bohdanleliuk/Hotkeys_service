@@ -1,38 +1,39 @@
 package com.bohdanllk.dto;
 
-import com.bohdanllk.model.App;
-import com.bohdanllk.model.Os;
-
-import java.util.UUID;
+import java.util.List;
 
 public class ParserDTO {
-    private String page;
-    private String os1Id;
-    private String os2Id;
+    private String url;
+    private List<String> osList;
     private String appId;
 
-    public String getPage() {
-        return page;
+    private boolean reverseFields;
+
+    public boolean isReverseFields() {
+        return reverseFields;
     }
 
-    public void setPage(String page) {
-        this.page = page;
+    public void setReverseFields(boolean reverseFields) {
+        this.reverseFields = reverseFields;
     }
 
-    public String getOs1Id() {
-        return os1Id;
+    public ParserDTO() {
     }
 
-    public void setOs1Id(String os1Id) {
-        this.os1Id = os1Id;
+    public String getUrl() {
+        return url;
     }
 
-    public String getOs2Id() {
-        return os2Id;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public void setOs2Id(String os2Id) {
-        this.os2Id = os2Id;
+    public List<String> getOsList() {
+        return osList;
+    }
+
+    public void setOsList(List<String> osList) {
+        this.osList = osList;
     }
 
     public String getAppId() {
@@ -41,25 +42,5 @@ public class ParserDTO {
 
     public void setAppId(String appId) {
         this.appId = appId;
-    }
-
-    public ParserDTO() {
-    }
-
-    public ParserDTO(String page, String os1Id, String os2Id, String appId) {
-        this.page = page;
-        this.os1Id = os1Id;
-        this.os2Id = os2Id;
-        this.appId = appId;
-    }
-
-    @Override
-    public String toString() {
-        return "ParserDTO{" +
-                "page='" + page + '\'' +
-                ", os1Id='" + os1Id + '\'' +
-                ", os2Id='" + os2Id + '\'' +
-                ", appId='" + appId + '\'' +
-                '}';
     }
 }

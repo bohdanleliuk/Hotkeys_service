@@ -2,6 +2,7 @@ package com.bohdanllk.service;
 
 import com.bohdanllk.dao.HotkeyDAO;
 import com.bohdanllk.dto.HotkeyDTO;
+import com.bohdanllk.exception.NotFoundException;
 import com.bohdanllk.mapper.HotkeyMapper;
 import com.bohdanllk.model.Hotkey;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,18 +10,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class HotkeyServiceImpl implements HotkeyService {
 
-
-    HotkeyMapper hotkeyMapper = HotkeyMapper.INSTANCE;
+    private final HotkeyMapper hotkeyMapper;
 
     private final HotkeyDAO hotkeyDAO;
 
-    public HotkeyServiceImpl(HotkeyDAO hotkeyDAO) {
+    public HotkeyServiceImpl(HotkeyDAO hotkeyDAO, HotkeyMapper hotkeyMapper) {
         this.hotkeyDAO = hotkeyDAO;
+        this.hotkeyMapper = hotkeyMapper;
     }
 
     @Override
@@ -35,13 +37,15 @@ public class HotkeyServiceImpl implements HotkeyService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public HotkeyDTO get(UUID id) {
-        return hotkeyMapper.hotkeyToDTO(hotkeyDAO.get(id));
+        return Optional.ofNullable(hotkeyDAO.get(id))
+                .map(hotkeyMapper::hotkeyToDTO)
+                .orElseThrow(() -> new NotFoundException("hotkey with id " + id + " not found"));
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<HotkeyDTO> getAll() {
         return hotkeyMapper.hotkeyListToDTO(hotkeyDAO.getAll());
     }

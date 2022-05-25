@@ -16,7 +16,7 @@ public class Os {
     private UUID id;
 
     @NotNull(message = "os name should be not null!")
-    @Size(max = 30, message = "Max size of os name is 30!")
+    @Size(max = 64, message = "Max size of os name is 64!")
     @Column(name = "name", unique = true)
     private String name;
 

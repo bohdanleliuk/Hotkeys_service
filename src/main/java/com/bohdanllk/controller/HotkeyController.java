@@ -1,11 +1,8 @@
 package com.bohdanllk.controller;
 
 import com.bohdanllk.dto.HotkeyDTO;
-import com.bohdanllk.model.Hotkey;
 import com.bohdanllk.service.HotkeyService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,8 +13,7 @@ import java.util.UUID;
 @RequestMapping("/hotkey")
 public class HotkeyController {
 
-    final
-    HotkeyService hotkeyService;
+    private final HotkeyService hotkeyService;
 
     public HotkeyController(HotkeyService hotkeyService) {
         this.hotkeyService = hotkeyService;

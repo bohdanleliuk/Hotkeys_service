@@ -16,12 +16,12 @@ public class App {
     private UUID id;
 
     @NotNull(message = "app name should be not null!")
-    @Size(max = 30, message = "Max size of app name is 30!")
+    @Size(max = 64, message = "Max size of app name is 64!")
     @Column(name = "name", unique = true)
     private String name;
 
 
-    @OneToMany(mappedBy = "app", targetEntity=Hotkey.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "app", targetEntity=Hotkey.class, cascade = CascadeType.ALL)
     private List<Hotkey> hotkeys;
 
 

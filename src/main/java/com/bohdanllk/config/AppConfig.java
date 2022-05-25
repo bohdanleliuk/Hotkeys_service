@@ -49,7 +49,6 @@ public class AppConfig {
         properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
         properties.put("hibernate.hbm2ddl.auto", environment.getRequiredProperty("hibernate.hbm2ddl.auto"));
         properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
-        properties.put("hibernate.bytecode.use_reflection_optimizer", environment.getRequiredProperty("hibernate.bytecode.use_reflection_optimizer"));
         properties.put("hibernate.jdbc.batch_size", environment.getRequiredProperty("hibernate.jdbc.batch_size"));
         properties.put("hibernate.order_inserts", environment.getRequiredProperty("hibernate.order_inserts"));
         properties.put("hibernate.order_updates", environment.getRequiredProperty("hibernate.order_updates"));
