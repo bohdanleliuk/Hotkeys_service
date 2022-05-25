@@ -1,83 +1,103 @@
 package com.bohdanllk.parser;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import com.bohdanllk.dto.AppDTO;
 import com.bohdanllk.dto.HotkeyDTO;
 import com.bohdanllk.dto.OsDTO;
 import com.bohdanllk.dto.ParserDTO;
-import com.bohdanllk.model.App;
-import com.bohdanllk.model.Hotkey;
-import com.bohdanllk.model.Os;
-import com.bohdanllk.service.*;
+import com.bohdanllk.exception.ParserException;
+import com.bohdanllk.service.AppService;
+import com.bohdanllk.service.HotkeyService;
+import com.bohdanllk.service.OsService;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ParseHtml {
     private final OsService osService;
     private final AppService appService;
-    private final HotkeyService hotkeyService;
 
     public ParseHtml(OsService osService, AppService appService, HotkeyService hotkeyService) {
         this.osService = osService;
         this.appService = appService;
-        this.hotkeyService = hotkeyService;
     }
 
-    private final Integer COLUMN_SIZE = 3;
+    //Parse List of Hotkey from first table on url from parserDTO
+    public List<HotkeyDTO> parseListHotkey(ParserDTO parserDTO) {
+        String url = Optional.ofNullable(parserDTO.getUrl()).orElseThrow(() -> new ParserException("url can't be null"));
 
-    public List<Hotkey> parseToList(ParserDTO parserDTO) throws IOException {
-        String page = parserDTO.getPage();
-        OsDTO osDTO1 = osService.get(UUID.fromString(parserDTO.getOs1Id()));
-        OsDTO osDTO2 = osService.get(UUID.fromString(parserDTO.getOs2Id()));
-        AppDTO appDTO = appService.get(UUID.fromString(parserDTO.getAppId()));
+        Optional.ofNullable(parserDTO.getOsList()).orElseThrow(() -> new ParserException("osList can't be null"));
+        List<OsDTO> osList = parserDTO.getOsList().stream().map(x -> osService.get(UUID.fromString(x))).toList();
+
+        UUID appId = Optional.ofNullable(parserDTO.getAppId())
+                .map(x -> UUID.fromString(x))
+                .orElseThrow(() -> new ParserException("app_id can't be null"));
+        AppDTO appDTO = appService.get(appId);
+
+
+        List<String> parseList = null;
+        Integer columnSize = osList.size() + 1;
+        try {
+            parseList = parseListFromURL(url, columnSize);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        boolean reverseFields = parserDTO.isReverseFields();
+
+        return convertToHotkeyList(parseList, osList, appDTO, reverseFields);
+    }
+
+
+    //Parse List of String from first table on url from parserDTO
+    private List<String> parseListFromURL(String url, Integer columnSize) throws IOException {
 
         List<String> result = new ArrayList<String>();
-        org.jsoup.nodes.Document doc = Jsoup.connect(page).get();
-        org.jsoup.select.Elements tables = doc.select("tbody");
-        for (org.jsoup.nodes.Element table : tables) {
-            org.jsoup.select.Elements rows = doc.select("tr");
-            for (org.jsoup.nodes.Element row : rows) {
-                org.jsoup.select.Elements columns = row.select("td");
-                for (org.jsoup.nodes.Element column : columns) {
-                    if (column.text() != null && columns.size() == COLUMN_SIZE) {
-                        result.add(column.text());
-                    }
+        Document doc = Jsoup.connect(url).get();
+        Elements tables = doc.select("tbody");
+        Elements rows = tables.get(0).select("tr");
+        for (Element row : rows) {
+            Elements columns = row.select("td");
+            for (Element column : columns) {
+                if (column.text() != null && columns.size() == columnSize) {
+                    result.add(column.text());
                 }
             }
-            break;
         }
+        return result;
+    }
+
+    //Convert List of String to List of Hotkeys
+    private List<HotkeyDTO> convertToHotkeyList(List<String> parseList, List<OsDTO> osList, AppDTO appDTO, boolean reverseFields) {
 
         List<HotkeyDTO> hotkeyList = new ArrayList<>();
 
-        for (int i = 0; i < result.size(); i = i + 3) {
-            HotkeyDTO hotkey1 = new HotkeyDTO();
-            HotkeyDTO hotkey2 = new HotkeyDTO();
+        Integer columnSize = osList.size() + 1;
 
-            hotkey1.setDescription(result.get(i));
-            hotkey2.setDescription(result.get(i));
+        for (int i = 0; i < parseList.size(); i += columnSize) {
+            for (int j = 0; j < osList.size(); j++) {
+                HotkeyDTO hotkey = new HotkeyDTO();
+                hotkey.setApp(appDTO);
+                hotkey.setOs(osList.get(j));
+                if (!reverseFields) {
+                    hotkey.setDescription(parseList.get(i));
+                    hotkey.setCombination(parseList.get(i + 1 + j));
+                } else {
+                    hotkey.setDescription(parseList.get(i + columnSize - 1));
+                    hotkey.setCombination(parseList.get(i + j));
+                }
+                hotkeyList.add(hotkey);
+            }
 
-            hotkey1.setCombination(result.get(i + 1));
-            hotkey2.setCombination(result.get(i + 2));
-
-            hotkey1.setOs(osDTO1);
-            hotkey2.setOs(osDTO2);
-
-            hotkey1.setApp(appDTO);
-            hotkey2.setApp(appDTO);
-
-            hotkeyList.add(hotkey1);
-            hotkeyList.add(hotkey2);
         }
-
-        hotkeyService.addList(hotkeyList);
-
-        return null;
+        return hotkeyList;
     }
 }

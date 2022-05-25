@@ -3,7 +3,6 @@ package com.bohdanllk.controller;
 import com.bohdanllk.dto.OsDTO;
 import com.bohdanllk.service.OsService;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,8 +12,7 @@ import java.util.UUID;
 @RequestMapping("/os")
 public class OsController {
 
-    final
-    OsService osService;
+    private final OsService osService;
 
     public OsController(OsService osService) {
         this.osService = osService;

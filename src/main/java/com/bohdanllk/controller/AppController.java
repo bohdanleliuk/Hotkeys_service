@@ -13,7 +13,7 @@ import java.util.UUID;
 @RequestMapping("/app")
 public class AppController {
 
-    final AppService appService;
+    private final AppService appService;
 
     public AppController(AppService appService) {
         this.appService = appService;

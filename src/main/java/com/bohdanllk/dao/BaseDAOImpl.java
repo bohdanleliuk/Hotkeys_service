@@ -34,7 +34,10 @@ public abstract class BaseDAOImpl<T> implements BaseDAO<T> {
     }
 
     @Override
-    public abstract List<T> getAll();
+    public List<T> getAll() {
+        Session session = getSession();
+        return session.createQuery("FROM " + genericClass().getName(), genericClass()).getResultList();
+    }
 
     @Override
     public T update(T t) {

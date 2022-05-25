@@ -1,8 +1,5 @@
 package com.bohdanllk.dto;
 
-import com.bohdanllk.model.Hotkey;
-
-import java.util.List;
 import java.util.UUID;
 
 public class AppDTO {
