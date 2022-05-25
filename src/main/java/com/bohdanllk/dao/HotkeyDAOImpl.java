@@ -21,7 +21,7 @@ public class HotkeyDAOImpl extends BaseDAOImpl<Hotkey> implements HotkeyDAO {
         Session session = getSession();
         for (int i = 0; i < hotkeyList.size(); i++) {
             session.persist(hotkeyList.get(i));
-            if (i % BATCH_SIZE == 0) {
+            if ((i + 1) % BATCH_SIZE == 0) {
                 session.flush();
                 session.clear();
             }
