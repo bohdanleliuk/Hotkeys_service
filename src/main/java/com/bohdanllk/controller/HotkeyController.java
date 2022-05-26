@@ -10,6 +10,7 @@ import java.util.UUID;
 
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/hotkey")
 public class HotkeyController {
 
